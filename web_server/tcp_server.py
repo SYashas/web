@@ -1,5 +1,6 @@
 import socket
 import time
+import pickle
 
 #create a socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -19,18 +20,25 @@ while True:
     print(f"Connection established from {address} client!")
     print(f"Client info: {client}")
     msg = 'Welcome to the Server!'
-    msg = f'{len(msg):<{HEADER_LENGTH}}' + msg
-    client.send(bytes(msg, "utf-8"))
+    msg = pickle.dumps(msg)
+    msg = bytes(f'{len(msg):<{HEADER_LENGTH}}', "utf-8") + msg
+    #client.send(bytes(msg, "utf-8"))
+    client.send(msg)
+    time.sleep(3)
     """#Receiving data from client
     recv_msg = client.recv(1024)
     print(recv_msg.decode("utf-8"))
     client.send(recv_msg)"""
 
-    while True:
+    msg = {"name":"yashas", "message": "hello world"}
+    msg = pickle.dumps(msg)
+    msg = bytes(f'{len(msg):<{HEADER_LENGTH}}', "utf-8") + msg
+    client.send(msg)
+    '''while True:
         time.sleep(3)
         msg = f'the current timr is {time.time()}'
         msg = f'{len(msg):<{HEADER_LENGTH}}' + msg
-        client.send(bytes(msg, "utf-8"))
+        client.send(bytes(msg, "utf-8"))'''
     """while True:
         recv_msg = client.recv(1024)
         recv_msg = recv_msg.decode("utf-8")

@@ -1,4 +1,5 @@
 import socket
+import pickle
 
 #create a socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -7,7 +8,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((socket.gethostname(), 5688))
 
 HEADER_LENGTH = 10
-full_msg = ''
+full_msg = b''
 new_msg = True
 while True:
     msg = s.recv(16)
@@ -15,12 +16,13 @@ while True:
         print('length of the new message is', msg[:HEADER_LENGTH])
         msg_len = int(msg[:HEADER_LENGTH])
         new_msg = False
-    full_msg += msg.decode("utf-8")
+    full_msg += msg
 
     if len(full_msg) - HEADER_LENGTH == msg_len:
         print('full message received:', full_msg[HEADER_LENGTH:])
+        print(pickle.loads(full_msg[HEADER_LENGTH:]))
         new_msg = True
-        full_msg = ''
+        full_msg = b''
 
 #s.send(bytes('Hello from client', 'utf-8'))
 
