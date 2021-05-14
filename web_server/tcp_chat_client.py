@@ -22,14 +22,26 @@ username = my_username.encode("utf-8")
 username_header = f"{len(username):<{HEADER_LENGTH}}".encode("utf-8")
 client_socket.send(username_header + username)
 
-while True:
-    #message we want to send
-    my_message = input(f"{username} > ")
-    if my_message:
-        message = my_message.encode("utf-8")
-        message_header = f"{len(message):<{HEADER_LENGTH}}".encode("utf-8")
-        client_socket.send(message_header + message)
+def get_message_input():
+    while True:
+        # message we want to send
+        my_message = input(f"{username} > ")
+        if my_message:
+            message = my_message.encode("utf-8")
+            message_header = f"{len(message):<{HEADER_LENGTH}}".encode("utf-8")
+            client_socket.send(message_header + message)
 
+message_thread = threading.Thread(target=get_message_input, daemon=True)
+message_thread.start()
+
+while True:
+    """
+        # This code using select and sys.stdin won't work on windows
+        input = select.select([sys.stdin], [], [])[0]
+        if input:
+            my_message = sys.stdin.readline().rstrip()
+    """
+    # receive message from server
     try:
         while True:
             username_header = client_socket.recv(HEADER_LENGTH)

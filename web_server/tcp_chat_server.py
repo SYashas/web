@@ -25,7 +25,7 @@ def receive_message(client_socket):
         message_length = int(message_header.decode("utf-8"))
         return {"header": message_header, "data": client_socket.recv(message_length)}
     except:
-        return client_message
+        return False
     
 
 while socket_list:
